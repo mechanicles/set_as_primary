@@ -2,7 +2,7 @@
 
 require_relative "test_helper"
 
-class TestSqlite < Minitest::Test
+class TestSqlite < ActiveSupport::TestCase
   # include GemSetupTest
   include MainGemTest
   # include ExcpetionsTest
