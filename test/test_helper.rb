@@ -101,7 +101,7 @@ end
 
 module GemSetupTest
   def test_no_exception_is_raised_if_set_as_primary_method_is_called_with_correct_arguments
-    assert_silent { EmailAddress.set_as_primary :primary, foreign_key: :user_id }
+    assert_silent { EmailAddress.set_as_primary :primary, owner_key: :user_id }
   end
 end
 
@@ -137,32 +137,33 @@ module SimpleAssocationTests
 end
 
 module PolymorphicAssociationTests
-  def test_it_sets_primary_to_address_if_there_is_only_record
+  def test_it_sets_primary_to_the_address_if_there_is_only_one_address_record
     @alice = User.first
 
-    email_address = @alice.addresses.create!(data: "Pune, India")
+    address = @alice.addresses.create!(data: "Pune, India")
 
-    assert email_address.primary?
+    assert_equal 1, @alice.addresses.count
+    assert address.primary?
   end
 
-  def test_it_sets_primary_to_new_email_address_where_its_primary_is_set_to_true
+  def test_it_updates_the_primary_for_new_record_where_it_is_set_to_true
     @alice = User.first
 
-    email_address1 = @alice.email_addresses.create!(email: "alice@example.com")
-    email_address2 = @alice.email_addresses.create!(email: "alice2@example.com", primary: true)
+    address1 = @alice.addresses.create!(data: "Pune, India")
+    address2 = @alice.addresses.create!(data: "Mumbai, India", primary: true)
 
-    assert email_address2.primary?
-    assert_not email_address1.reload.primary?
+    assert address2.primary?
+    assert_not address1.reload.primary?
   end
 
-  def test_it_updates_primary_correclty
+  def test_it_updates_primary_correclty_based_on_changes
     @alice = User.first
 
-    email_address1 = @alice.email_addresses.create!(email: "alice@example.com")
-    email_address2 = @alice.email_addresses.create!(email: "alice2@example.com", primary: true)
-    email_address1.update!(primary: true)
+    address1 = @alice.addresses.create!(data: "Pune, India")
+    address2 = @alice.addresses.create!(data: "Mumbai, India", primary: true)
+    address1.update!(primary: true)
 
-    assert email_address1.primary?
-    assert_not email_address2.reload.primary?
+    assert address1.primary?
+    assert_not address2.reload.primary?
   end
 end
