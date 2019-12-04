@@ -167,3 +167,21 @@ module PolymorphicAssociationTests
     assert_not address2.reload.primary?
   end
 end
+
+module ExcpetionsTests
+  def test_wrong_argument_error
+    e = assert_raise(SetAsPrimary::Error) {
+      EmailAddress.set_as_primary "primary", owner_key: :user_id
+    }
+
+    assert_equal("Wrong attribute! Please provide attribute in symbol type", e.message)
+  end
+
+  def test_error_with_both_configuration_options
+    e = assert_raise(SetAsPrimary::Error) {
+      EmailAddress.set_as_primary :primary, owner_key: :owner_id, polymorphic_key: :owner
+    }
+
+    assert_equal("Either provide `owner_key` or `polymorphic_key` option", e.message)
+  end
+end

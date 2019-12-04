@@ -30,11 +30,11 @@ module SetAsPrimary
       private
         def handle_setup_errors(primary_flag_attribute, configuration)
           if !primary_flag_attribute.is_a?(Symbol)
-            raise SetAsPrimary::Error, "Wrong attribute for primary flag attribute"
+            raise SetAsPrimary::Error, "Wrong attribute! Please provide attribute in symbol type"
           end
 
           if configuration.values.all?(&:present?)
-            raise SetAsPrimary::Error, "Either provide `#{configuration.keys.first}` or `#{configuration.keys.last}`!"
+            raise SetAsPrimary::Error, "Either provide `#{configuration.keys.first}` or `#{configuration.keys.last}` option"
           end
         end
     end

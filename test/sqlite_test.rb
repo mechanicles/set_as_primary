@@ -6,9 +6,7 @@ class TestSqlite < ActiveSupport::TestCase
   include GemSetupTest
   include SimpleAssocationTests
   include PolymorphicAssociationTests
-  # include ExcpetionsTest
-  # include SearchTest
-  # include JoinTest
+  include ExcpetionsTests
 
   def setup
     super
