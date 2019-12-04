@@ -20,20 +20,11 @@ class User < ActiveRecord::Base
   has_many :addresses, as: :owner
 end
 
-class Admin < ActiveRecord::Base
-  has_many :addresses, as: :owner
-end
-
 class EmailAddress < ActiveRecord::Base
   include SetAsPrimary
   belongs_to :user
 
   set_as_primary :primary, owner_key: :user_id
-end
-
-class PhoneNumber < ActiveRecord::Base
-  include SetAsPrimary
-  belongs_to :user
 end
 
 class Address < ActiveRecord::Base
@@ -51,27 +42,8 @@ def create_tables
     t.timestamps
   end
 
-  ActiveRecord::Migration.create_table :admins, force: true do |t|
-    t.string :name, null: false
-    t.timestamps
-  end
-
   ActiveRecord::Migration.create_table :email_addresses, force: true do |t|
     t.string :email, null: false
-    t.boolean :primary, default: false, null: false
-    t.references :user
-    t.timestamps
-  end
-
-  ActiveRecord::Migration.create_table :phone_numbers, force: true do |t|
-    t.integer :number, null: false
-    t.boolean :primary, default: false, null: false
-    t.references :user
-    t.timestamps
-  end
-
-  ActiveRecord::Migration.create_table :phone_numbers, force: true do |t|
-    t.integer :number, null: false
     t.boolean :primary, default: false, null: false
     t.references :user
     t.timestamps
@@ -88,14 +60,11 @@ end
 
 def create_dummy_data
   User.create! name: "alice"
-  Admin.create! name: "bob"
 end
 
 def drop_dummy_data
   User.delete_all
-  Admin.delete_all
   EmailAddress.delete_all
-  PhoneNumber.delete_all
   Address.delete_all
 end
 
