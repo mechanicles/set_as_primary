@@ -29,9 +29,16 @@ end
 
 class Address < ActiveRecord::Base
   include SetAsPrimary
-  belongs_to :owner, polymorphic: true, touch: true
+  belongs_to :owner, polymorphic: true
 
   set_as_primary :primary, polymorphic_key: :owner
+end
+
+class PhoneNumber < ActiveRecord::Base
+  include SetAsPrimary
+  belongs_to :owner, polymorphic: true
+
+  set_as_primary :main, owner_key: :user_id
 end
 
 def create_tables
@@ -45,6 +52,13 @@ def create_tables
   ActiveRecord::Migration.create_table :email_addresses, force: true do |t|
     t.string :email, null: false
     t.boolean :primary, default: false, null: false
+    t.references :user
+    t.timestamps
+  end
+
+  ActiveRecord::Migration.create_table :phone_numbers, force: true do |t|
+    t.string :number, null: false
+    t.boolean :main, default: false, null: false
     t.references :user
     t.timestamps
   end
@@ -71,6 +85,23 @@ end
 module GemSetupTest
   def test_no_exception_is_raised_if_set_as_primary_method_is_called_with_correct_arguments
     assert_silent { EmailAddress.set_as_primary :primary, owner_key: :user_id }
+  end
+
+  def test_default_primary_flag_attribute_should_be_primary
+    EmailAddress.set_as_primary owner_key: :user_id
+    assert_equal :primary, EmailAddress._primary_flag_attribute
+  end
+
+  def test_primary_flag_attribute_should_get_set_properly
+    assert_equal :main, PhoneNumber._primary_flag_attribute
+  end
+
+  def test_attributes_should_get_set_properly
+    assert_equal :primary, EmailAddress._primary_flag_attribute
+    assert_equal :user_id, EmailAddress._owner_key
+
+    assert_equal :primary, Address._primary_flag_attribute
+    assert_equal :owner, Address._polymorphic_key
   end
 end
 

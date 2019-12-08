@@ -12,7 +12,7 @@ module SetAsPrimary
     instance_eval do
       class_attribute :_primary_flag_attribute, :_owner_key, :_polymorphic_key
 
-      def set_as_primary(primary_flag_attribute = :primary, options = {})
+      def set_as_primary(primary_flag_attribute = :primary, options)
         configuration = { owner_key: nil, polymorphic_key: nil }
         configuration.update(options) if options.is_a?(Hash)
 
