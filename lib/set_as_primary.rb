@@ -41,7 +41,7 @@ module SetAsPrimary
 
   private
     def unset_old_primary
-      klass   = self.class
+      klass = self.class
 
       return unless self.public_send(klass._primary_flag_attribute)
 
@@ -68,7 +68,7 @@ module SetAsPrimary
     end
 
     def set_primary
-      klass   = self.class
+      klass = self.class
       options = {}
 
       if klass._owner_key.present?
