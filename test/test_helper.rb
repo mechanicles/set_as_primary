@@ -27,18 +27,18 @@ class EmailAddress < ActiveRecord::Base
   set_as_primary :primary, owner_key: :user_id
 end
 
-class Address < ActiveRecord::Base
-  include SetAsPrimary
-  belongs_to :owner, polymorphic: true
-
-  set_as_primary :primary, polymorphic_key: :owner
-end
-
 class PhoneNumber < ActiveRecord::Base
   include SetAsPrimary
   belongs_to :owner, polymorphic: true
 
   set_as_primary :main, owner_key: :user_id
+end
+
+class Address < ActiveRecord::Base
+  include SetAsPrimary
+  belongs_to :owner, polymorphic: true
+
+  set_as_primary :primary, polymorphic_key: :owner
 end
 
 def create_tables
@@ -168,7 +168,7 @@ module PolymorphicAssociationTests
   end
 end
 
-module ExcpetionsTests
+module ExceptionsTests
   def test_wrong_argument_error
     e = assert_raise(SetAsPrimary::Error) {
       EmailAddress.set_as_primary "primary", owner_key: :user_id

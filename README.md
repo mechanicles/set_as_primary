@@ -1,8 +1,6 @@
 # SetAsPrimary
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/set_as_primary`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+**SetAsPrimary** gem helps to handle primary flag to your models very easily. You don't need to think too much about handling primary record, just include this module in your model and it will work fine.
 
 ## Installation
 
@@ -22,7 +20,48 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+In your Rails application, you might have models like EmailAddress, PhoneNumber, Address, and etc, which belong to User/Person model. There, you might need to set primary email address, primary phone number, or primary address for a user, and this gem will help you to handle that.
+
+Examples:
+
+```ruby
+class User < ActiveRecord::Base
+  has_many :email_addresses
+  has_many :phone_numbers
+  has_many :addresses, as: :owner
+end
+
+class EmailAddress < ActiveRecord::Base
+  include SetAsPrimary
+  belongs_to :user
+
+  set_as_primary :primary, owner_key: :user_id
+end
+
+class PhoneNumber < ActiveRecord::Base
+  include SetAsPrimary
+  belongs_to :owner, polymorphic: true
+
+  set_as_primary :main, owner_key: :user_id
+end
+
+class Address < ActiveRecord::Base
+  include SetAsPrimary
+  belongs_to :owner, polymorphic: true
+
+  set_as_primary :primary, polymorphic_key: :owner
+end
+``` 
+
+You just need to include `SetAsPrimary` in your model where you want to handle primary flag. Then pass your primary flag with required association keys like `owner_key` or `polymorphic_key`  for  class helper method `set_as_primary`.
+
+Default primary flag is `primary` and you can use another too (but make sure that that flag should be boolean type column).
+
+If your model does not have primary key, then you can add it by running following command in your rails project.
+
+```ssh
+rails generate set_as_primary your-table-name
+```
 
 ## Development
 
