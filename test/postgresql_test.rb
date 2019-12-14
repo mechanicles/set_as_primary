@@ -2,7 +2,7 @@
 
 require_relative "test_helper"
 
-class SqliteTest < ActiveSupport::TestCase
+class PostgresqlTest < ActiveSupport::TestCase
   include GemSetupTest
   include SimpleAssocationTests
   include PolymorphicAssociationTests
@@ -11,7 +11,7 @@ class SqliteTest < ActiveSupport::TestCase
   def setup
     super
     @@setup ||= begin
-                  ActiveRecord::Base.establish_connection adapter: "sqlite3", database: ":memory:"
+                  ActiveRecord::Base.establish_connection adapter: "postgresql", database: "set_as_primary_test"
                   create_tables
                 end
 
