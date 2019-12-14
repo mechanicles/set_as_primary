@@ -1,3 +1,5 @@
+*.gem
+*.lock
 /.bundle/
 /.yardoc
 /_yardoc/
@@ -6,3 +8,5 @@
 /pkg/
 /spec/reports/
 /tmp/
+.ruby-version
+.ruby-gemset
