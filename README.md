@@ -20,7 +20,7 @@ Or install it yourself as:
 
 ## Usage
 
-In your Rails application, you might have models like EmailAddress, PhoneNumber, Address, and etc, which belong to User/Person model. There, you might need to set primary email address, primary phone number, or primary address for a user, and this gem will help you to handle that.
+In your Rails application, you might have models like EmailAddress, PhoneNumber, Address, etc, which belong to User/Person model. There, you might need to set primary email address, primary phone number, or primary address for a user, and this gem will help you to handle that.
 
 Examples:
 

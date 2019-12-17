@@ -29,7 +29,7 @@ end
 
 class PhoneNumber < ActiveRecord::Base
   include SetAsPrimary
-  belongs_to :owner, polymorphic: true
+  belongs_to :user
 
   set_as_primary :main, owner_key: :user_id
 end
@@ -174,7 +174,7 @@ module ExceptionsTests
       EmailAddress.set_as_primary "primary", owner_key: :user_id
     }
 
-    assert_equal("Wrong attribute! Please provide attribute in symbol type", e.message)
+    assert_equal("Wrong attribute! Please provide attribute in symbol type.", e.message)
   end
 
   def test_error_with_both_configuration_options
@@ -182,6 +182,6 @@ module ExceptionsTests
       EmailAddress.set_as_primary :primary, owner_key: :owner_id, polymorphic_key: :owner
     }
 
-    assert_equal("Either provide `owner_key` or `polymorphic_key` option", e.message)
+    assert_equal("Either provide `owner_key` or `polymorphic_key` option.", e.message)
   end
 end
