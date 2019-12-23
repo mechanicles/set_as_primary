@@ -10,13 +10,15 @@ module SetAsPrimary
 
   included do
     before_save :unset_old_primary
-    before_save :set_primary
+    before_save :force_primary, if: -> { self.class._force_primary }
 
     instance_eval do
-      class_attribute :_primary_flag_attribute, :_owner_key, :_polymorphic_key
+      class_attribute :_primary_flag_attribute, :_owner_key,
+                      :_polymorphic_key, :_force_primary
 
       def set_as_primary(primary_flag_attribute = :primary, options)
-        configuration = { owner_key: nil, polymorphic_key: nil }
+        configuration = { owner_key: nil, polymorphic_key: nil, force_primary: true }
+
         configuration.update(options) if options.is_a?(Hash)
 
         handle_setup_errors(primary_flag_attribute, configuration)
@@ -24,6 +26,7 @@ module SetAsPrimary
         self._primary_flag_attribute = primary_flag_attribute
         self._owner_key = configuration[:owner_key]
         self._polymorphic_key = configuration[:polymorphic_key]
+        self._force_primary = configuration[:force_primary]
       end
 
       private
@@ -32,8 +35,11 @@ module SetAsPrimary
             raise SetAsPrimary::Error, "Wrong attribute! Please provide attribute in symbol type."
           end
 
-          if configuration.values.all?(&:present?)
-            raise SetAsPrimary::Error, "Either provide `#{configuration.keys.first}` or `#{configuration.keys.last}` option."
+          owner_key = configuration[:owner_key]
+          polymorphic_key = configuration[:polymorphic_key]
+
+          if (owner_key.present? && polymorphic_key.present?) || (owner_key.nil? && polymorphic_key.nil?)
+            raise SetAsPrimary::Error, "Either provide `owner_key` or `polymorphic_key` option."
           end
         end
     end
@@ -53,7 +59,7 @@ module SetAsPrimary
       scope.update_all(options)
     end
 
-    def set_primary
+    def force_primary
       count = self.class.where(scope_options).count
 
       if (count == 1 && !new_record?) || (count == 0 && new_record?)

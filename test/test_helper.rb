@@ -31,7 +31,7 @@ class PhoneNumber < ActiveRecord::Base
   include SetAsPrimary
   belongs_to :user
 
-  set_as_primary :main, owner_key: :user_id
+  set_as_primary :default, owner_key: :user_id
 end
 
 class Address < ActiveRecord::Base
@@ -58,7 +58,7 @@ def create_tables
 
   ActiveRecord::Migration.create_table :phone_numbers, force: true do |t|
     t.string :number, null: false
-    t.boolean :main, default: false, null: false
+    t.boolean :default, default: false, null: false
     t.references :user
     t.timestamps
   end
@@ -88,20 +88,29 @@ module GemSetupTest
   end
 
   def test_default_primary_flag_attribute_should_be_primary
-    EmailAddress.set_as_primary owner_key: :user_id
     assert_equal :primary, EmailAddress._primary_flag_attribute
   end
 
   def test_primary_flag_attribute_should_get_set_properly
-    assert_equal :main, PhoneNumber._primary_flag_attribute
+    assert_equal :default, PhoneNumber._primary_flag_attribute
   end
 
   def test_attributes_should_get_set_properly
     assert_equal :primary, EmailAddress._primary_flag_attribute
     assert_equal :user_id, EmailAddress._owner_key
+    assert EmailAddress._force_primary # By default this attribute will be true.
 
     assert_equal :primary, Address._primary_flag_attribute
     assert_equal :owner, Address._polymorphic_key
+  end
+
+  def test_force_primary_attribute_should_be_false
+    EmailAddress.set_as_primary :primary, owner_key: :user_id, force_primary: false
+    assert_not EmailAddress._force_primary
+  ensure
+    # NOTE: We are making sure that it will set force_primary back to `true` so other
+    # tests get passed.
+    EmailAddress.set_as_primary :primary, owner_key: :user_id, force_primary: true
   end
 end
 
@@ -133,6 +142,17 @@ module SimpleAssocationTests
 
     assert email_address1.primary?
     assert_not email_address2.reload.primary?
+  end
+
+  def test_if_force_primary_is_set_as_false_then_it_should_not_force_primary_for_last_single_record
+    EmailAddress.set_as_primary :primary, owner_key: :user_id, force_primary: false
+
+    @alice = User.first
+
+    email_address1 = @alice.email_addresses.create!(email: "alice@example.com")
+    assert_not email_address1.primary?
+  ensure
+    EmailAddress.set_as_primary :primary, owner_key: :user_id, force_primary: true
   end
 end
 
@@ -166,6 +186,17 @@ module PolymorphicAssociationTests
     assert address1.primary?
     assert_not address2.reload.primary?
   end
+
+  def test_if_force_primary_is_set_as_false_then_it_should_not_force_primary_for_last_single_record
+    Address.set_as_primary :primary, polymorphic_key: :owner, force_primary: false
+
+    @alice = User.first
+
+    address1 = @alice.addresses.create!(data: "Pune, India")
+    assert_not address1.primary?
+  ensure
+    Address.set_as_primary :primary, polymorphic_key: :owner, force_primary: true
+  end
 end
 
 module ExceptionsTests
@@ -180,6 +211,14 @@ module ExceptionsTests
   def test_error_with_both_configuration_options
     e = assert_raise(SetAsPrimary::Error) {
       EmailAddress.set_as_primary :primary, owner_key: :owner_id, polymorphic_key: :owner
+    }
+
+    assert_equal("Either provide `owner_key` or `polymorphic_key` option.", e.message)
+  end
+
+  def test_error_with_no_configuration_options
+    e = assert_raise(SetAsPrimary::Error) {
+      EmailAddress.set_as_primary :primary
     }
 
     assert_equal("Either provide `owner_key` or `polymorphic_key` option.", e.message)
