@@ -1,6 +1,8 @@
 # SetAsPrimary
 
-**SetAsPrimary** gem helps to handle primary flag to your models very easily. You don't need to think too much about handling primary record, just include this module in your model and it will work fine.
+The simplest way to handle primary or default flag to your models.
+
+Supports PostgreSQL, MySQL, and SQLite.
 
 ## Installation
 
@@ -20,48 +22,56 @@ Or install it yourself as:
 
 ## Usage
 
-In your Rails application, you might have models like EmailAddress, PhoneNumber, Address, etc, which belong to User/Person model. There, you might need to set primary email address, primary phone number, or primary address for a user, and this gem will help you to handle that.
+In your Rails application, you might have models like EmailAddress, PhoneNumber, Address, etc, which belong to User/Person model. There, you might need to set primary email address, primary phone number, or default address for a user, and this gem will help you to handle that.
 
 Examples:
 
 ```ruby
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   has_many :email_addresses
   has_many :phone_numbers
   has_many :addresses, as: :owner
 end
 
-class EmailAddress < ActiveRecord::Base
+class EmailAddress < ApplicationRecord
   include SetAsPrimary
   belongs_to :user
 
-  set_as_primary :primary, owner_key: :user_id
-end
+  set_as_primary :primary, owner_key: :user
+ end
 
-class PhoneNumber < ActiveRecord::Base
+class Address < ApplicationRecord
   include SetAsPrimary
   belongs_to :owner, polymorphic: true
 
-  set_as_primary :main, owner_key: :user_id
-end
-
-class Address < ActiveRecord::Base
-  include SetAsPrimary
-  belongs_to :owner, polymorphic: true
-
-  set_as_primary :primary, polymorphic_key: :owner
+  set_as_primary :primary, owner_key: :owner
 end
 ``` 
 
-You just need to include `SetAsPrimary` in your model where you want to handle primary flag. Then pass your primary flag with required association keys like `owner_key` or `polymorphic_key`  for  class helper method `set_as_primary`.
+You just need to include `SetAsPrimary` in your model where you want to handle primary flag. 
+Then pass your primary flag with required association keys, i.e., `owner_key` for  class helper method `set_as_primary`.
 
-Default primary flag is `primary` and you can use another too (but make sure that that flag should be boolean type column).
+Default primary flag is `primary` and you can use another too (but make sure that flag should be boolean column type column).
 
 If your model does not have primary key, then you can add it by running following command in your rails project.
 
 ```ssh
-rails generate set_as_primary your-table-name
+rails generate set_as_primary your_table_name
 ```
+
+#### force_primary
+
+```ruby
+class Address < ApplicationRecord
+  include SetAsPrimary
+  belongs_to :user
+
+  set_as_primary :default, owner_key: :user, force_primary: false
+ end
+```
+
+By default `force_primary` option is set to `true`. If this option is `true`, then it will automatically set record as primary when
+there is only one record in the table. If you don't want this flow then set it as `false`.
 
 ## Development
 

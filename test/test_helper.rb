@@ -115,7 +115,7 @@ module GemSetupTest
 end
 
 module SimpleAssocationTests
-  def test_it_sets_primary_to_email_address_if_there_is_only_record
+  def test_it_sets_primary_to_email_address_if_there_is_only_one_record
     @alice = User.first
 
     email_address = @alice.email_addresses.create!(email: "alice@example.com")
@@ -129,11 +129,11 @@ module SimpleAssocationTests
     email_address1 = @alice.email_addresses.create!(email: "alice@example.com")
     email_address2 = @alice.email_addresses.create!(email: "alice2@example.com", primary: true)
 
-    assert email_address2.primary?
     assert_not email_address1.reload.primary?
+    assert email_address2.primary?
   end
 
-  def test_it_updates_primary_correclty
+  def test_it_updates_primary_correctly
     @alice = User.first
 
     email_address1 = @alice.email_addresses.create!(email: "alice@example.com")
@@ -144,13 +144,14 @@ module SimpleAssocationTests
     assert_not email_address2.reload.primary?
   end
 
-  def test_if_force_primary_is_set_as_false_then_it_should_not_force_primary_for_last_single_record
+  def test_if_force_primary_is_set_to_false_then_it_should_not_force_primary_for_single_record
     EmailAddress.set_as_primary :primary, owner_key: :user, force_primary: false
 
     @alice = User.first
 
     email_address1 = @alice.email_addresses.create!(email: "alice@example.com")
     assert_not email_address1.primary?
+    assert_equal 1, @alice.email_addresses.count
   ensure
     EmailAddress.set_as_primary :primary, owner_key: :user, force_primary: true
   end
@@ -176,7 +177,7 @@ module PolymorphicAssociationTests
     assert_not address1.reload.primary?
   end
 
-  def test_it_updates_primary_correclty_based_on_changes
+  def test_it_updates_primary_correctly
     @alice = User.first
 
     address1 = @alice.addresses.create!(data: "Pune, India")
@@ -187,7 +188,7 @@ module PolymorphicAssociationTests
     assert_not address2.reload.primary?
   end
 
-  def test_if_force_primary_is_set_as_false_then_it_should_not_force_primary_for_last_single_record
+  def test_if_force_primary_is_set_to_false_then_it_should_not_force_primary_for_single_record
     Address.set_as_primary :primary, owner_key: :owner, force_primary: false
 
     @alice = User.first
