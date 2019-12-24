@@ -10,8 +10,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Santosh Wadghule"]
   spec.email         = ["santosh.wadghule@gmail.com"]
 
-  spec.summary       = "Set as primary"
-  spec.description   = "Set as primary"
+  spec.summary       = "The simplest way to handle the primary or default flag to your models."
   spec.homepage      = "https://github.com/mechanicles/set_as_primary"
   spec.license       = "MIT"
 

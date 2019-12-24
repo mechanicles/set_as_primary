@@ -1,6 +1,7 @@
 # SetAsPrimary
 
-The simplest way to handle primary or default flag to your models.
+The simplest way to handle the primary or default flag (:white_check_mark:) to
+your models.
 
 Supports PostgreSQL, MySQL, and SQLite.
 
@@ -22,7 +23,10 @@ Or install it yourself as:
 
 ## Usage
 
-In your Rails application, you might have models like EmailAddress, PhoneNumber, Address, etc, which belong to User/Person model. There, you might need to set primary email address, primary phone number, or default address for a user, and this gem will help you to handle that.
+In your Rails application, you might have models like EmailAddress, PhoneNumber,
+Address, etc., which belong to the User/Person model. There, you might need to
+set a primary email address, primary phone number, or default address for a user,
+and this gem helps you to do that.
 
 Examples:
 
@@ -48,16 +52,29 @@ class Address < ApplicationRecord
 end
 ``` 
 
-You just need to include `SetAsPrimary` in your model where you want to handle primary flag. 
+You need to include `SetAsPrimary` in your model where you want to handle the primary flag. 
 Then pass your primary flag with required association keys, i.e., `owner_key` for  class helper method `set_as_primary`.
 
-Default primary flag is `primary` and you can use another too (but make sure that flag should be boolean column type column).
+Default primary flag is `primary`, and you can use another too (but make sure that flag should be a boolean column type).
 
-If your model does not have primary key, then you can add it by running following command in your rails project.
+#### Migration
+
+If your model does not have the primary flag, then you can add it by running following command in your rails project:
 
 ```ssh
 rails generate set_as_primary your_table_name
 ```
+
+If you run above command for `email_addresses` table, then it creates migration like this:
+
+```ruby
+class AddPrimaryColumnToEmailAddresses < ActiveRecord::Migration[6.0]
+  def change
+    add_column :email_addresses, :primary, :boolean, default: false, null: false
+  end
+end
+```
+Don't forget to run `rails db:migrate` to create actual column in the table.
 
 #### force_primary
 
@@ -70,8 +87,8 @@ class Address < ApplicationRecord
  end
 ```
 
-By default `force_primary` option is set to `true`. If this option is `true`, then it will automatically set record as primary when
-there is only one record in the table. If you don't want this flow then set it as `false`.
+By default `force_primary` option is set to `true`. If this option is `true`, then it automatically sets record as primary when
+there is only one record in the table. If you don't want this flow, then set it as `false`.
 
 ## Development
 
@@ -81,12 +98,8 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/set_as_primary. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/mechanicles/set_as_primary. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the SetAsPrimary project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/set_as_primary/blob/master/CODE_OF_CONDUCT.md).
