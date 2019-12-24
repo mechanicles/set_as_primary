@@ -13,11 +13,10 @@ module SetAsPrimary
     before_save :force_primary, if: -> { self.class._force_primary }
 
     instance_eval do
-      class_attribute :_primary_flag_attribute, :_owner_key,
-                      :_polymorphic_key, :_force_primary
+      class_attribute :_primary_flag_attribute, :_owner_key, :_force_primary
 
       def set_as_primary(primary_flag_attribute = :primary, options)
-        configuration = { owner_key: nil, polymorphic_key: nil, force_primary: true }
+        configuration = { owner_key: nil, force_primary: true }
 
         configuration.update(options) if options.is_a?(Hash)
 
@@ -25,7 +24,6 @@ module SetAsPrimary
 
         self._primary_flag_attribute = primary_flag_attribute
         self._owner_key = configuration[:owner_key]
-        self._polymorphic_key = configuration[:polymorphic_key]
         self._force_primary = configuration[:force_primary]
       end
 
@@ -36,10 +34,13 @@ module SetAsPrimary
           end
 
           owner_key = configuration[:owner_key]
-          polymorphic_key = configuration[:polymorphic_key]
 
-          if (owner_key.present? && polymorphic_key.present?) || (owner_key.nil? && polymorphic_key.nil?)
-            raise SetAsPrimary::Error, "Either provide `owner_key` or `polymorphic_key` option."
+          if owner_key.nil?
+            raise SetAsPrimary::Error, "Please provide `owner_key` option."
+          end
+
+          if reflect_on_association(owner_key).nil?
+            raise ActiveRecord::AssociationNotFoundError.new(self, owner_key)
           end
         end
     end
@@ -53,10 +54,7 @@ module SetAsPrimary
 
       scope = scope.where("id != ?", id) unless new_record?
 
-      options = {}
-      options[self.class._primary_flag_attribute] = false
-      options[:updated_at] = Time.current
-      scope.update_all(options)
+      scope.update_all(self.class._primary_flag_attribute => false)
     end
 
     def force_primary
@@ -68,34 +66,20 @@ module SetAsPrimary
     end
 
     def scope_options
-      options = {}
-
-      if self.class._owner_key.present?
-        options[self.class._owner_key] = self.public_send(self.class._owner_key)
+      if self.class.reflect_on_association(self._owner_key).options[:polymorphic]
+        polymorphic_condition_options
       else
-        options = polymorphic_condition_options
+        owner_id = "#{self.class._owner_key}_id".to_sym
+        { owner_id => self.public_send(owner_id) }
       end
-
-      options
     end
 
     def polymorphic_condition_options
-      raise_association_not_found_error
+      owner = self.public_send(self.class._owner_key)
 
-      owner = self.public_send(self.class._polymorphic_key)
-      owner_key = "#{self.class._polymorphic_key}_id".to_sym
-      owner_type = "#{self.class._polymorphic_key}_type".to_sym
-
-      options = {}
-      options[owner_key] = owner.id
-      options[owner_type] = owner.class.name
-
-      options
-    end
-
-    def raise_association_not_found_error
-      unless self.class._reflect_on_association(self.class._polymorphic_key)
-        raise ActiveRecord::AssociationNotFoundError.new(self, self.class._polymorphic_key)
-      end
+      {
+        "#{self.class._owner_key}_id".to_sym =>  owner.id,
+        "#{self.class._owner_key}_type".to_sym => owner.class.name
+      }
     end
 end
