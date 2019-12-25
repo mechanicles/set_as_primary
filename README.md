@@ -8,6 +8,8 @@ Supports PostgreSQL, MySQL, and SQLite.
 [Demo Rails application](https://cryptic-lake-90495.herokuapp.com/) |
 [Demo Rails application GitHub repository](https://github.com/mechanicles/set_as_primary_rails_app)
 
+[![Build Status](https://travis-ci.org/mechanicles/set_as_primary.svg?branch=master)](https://travis-ci.org/mechanicles/set_as_primary)
+
 ## Installation
 
 Add this line to your application's Gemfile:
