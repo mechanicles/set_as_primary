@@ -5,6 +5,9 @@ your models.
 
 Supports PostgreSQL, MySQL, and SQLite.
 
+[Demo Rails application](https://cryptic-lake-90495.herokuapp.com/) |
+[Demo Rails application GitHub repository](https://github.com/mechanicles/set_as_primary_rails_app)
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -33,7 +36,6 @@ Examples:
 ```ruby
 class User < ApplicationRecord
   has_many :email_addresses
-  has_many :phone_numbers
   has_many :addresses, as: :owner
 end
 
@@ -52,20 +54,24 @@ class Address < ApplicationRecord
 end
 ``` 
 
-You need to include `SetAsPrimary` in your model where you want to handle the primary flag. 
-Then pass your primary flag with required association keys, i.e., `owner_key` for  class helper method `set_as_primary`.
+You need to include `SetAsPrimary` module in your model where you want to handle
+the primary flag. Then pass your primary flag attribute with required association
+key `owner_key` to  class helper method `set_as_primary`.
 
-Default primary flag is `primary`, and you can use another too (but make sure that flag should be a boolean column type).
+Default primary flag attribute is `primary`, and you can use another too (but 
+make sure that flag should be a boolean column type).
 
 #### Migration
 
-If your model does not have the primary flag, then you can add it by running following command in your rails project:
+If your table does not have the primary flag column, then you can add it by running 
+following command in your rails project:
 
 ```ssh
 rails generate set_as_primary your_table_name
 ```
 
-If you run above command for `email_addresses` table, then it creates migration like this:
+If you run above command for `email_addresses` table, then it creates
+migration like this:
 
 ```ruby
 class AddPrimaryColumnToEmailAddresses < ActiveRecord::Migration[6.0]
@@ -87,19 +93,29 @@ class Address < ApplicationRecord
  end
 ```
 
-By default `force_primary` option is set to `true`. If this option is `true`, then it automatically sets record as primary when
-there is only one record in the table. If you don't want this flow, then set it as `false`.
+By default `force_primary` option is set to `true`. If this option is `true`,
+then it automatically sets record as primary when there is only one record in
+the table. If you don't want this flow, then set it as `false`.
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. Then, run
+`rake test` to run the tests. You can also run `bin/console` for an interactive
+prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`. To
+release a new version, update the version number in `version.rb`, and then run
+`bundle exec rake release`, which will create a git tag for the version, push git
+commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/mechanicles/set_as_primary. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at 
+https://github.com/mechanicles/set_as_primary. This project is intended to be a
+safe, welcoming space for collaboration, and contributors are expected to adhere
+to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The gem is available as open source under the terms of the 
+[MIT License](https://opensource.org/licenses/MIT).
