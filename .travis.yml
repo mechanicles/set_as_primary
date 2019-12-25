@@ -3,6 +3,10 @@ sudo: false
 language: ruby
 rvm:
   - 2.5.3
+gemfile:
+  - Gemfile
+  - test/gemfiles/activerecord52.gemfile
+  - test/gemfiles/activerecord42.gemfile
 script: bundle exec rake test
 services:
   - postgresql
