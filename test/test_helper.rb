@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
-require "set_as_primary"
-
+require "bundler/setup"
+Bundler.require(:default)
 require "minitest/autorun"
 require "minitest/pride"
 require "logger"
