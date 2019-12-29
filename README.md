@@ -1,7 +1,7 @@
 # SetAsPrimary
 
 The simplest way to handle the primary or default flag (:white_check_mark:) to
-your models.
+your Rails models.
 
 Supports PostgreSQL, MySQL, and SQLite.
 
@@ -29,9 +29,11 @@ Or install it yourself as:
 ## Usage
 
 In your Rails application, you might have models like EmailAddress, PhoneNumber,
-Address, etc., which belong to the User/Person model. There, you might need to
-set a primary email address, primary phone number, or default address for a user,
-and this gem helps you to do that.
+Address, etc., which belong to the User/Person model or polymorphic model. There,
+you might need to set a primary email address, primary phone number, or default
+address for a user, and this gem helps you to do that.
+
+It also supports single model with no association's context. 
 
 Examples:
 
@@ -54,14 +56,21 @@ class Address < ApplicationRecord
 
   set_as_primary :primary, owner_key: :owner
 end
+
+# Single model with no owner/association's context.
+class Post < ApplicationRecord
+  include SetAsPrimary
+  
+  set_as_primary
+end
 ``` 
 
-You need to include `SetAsPrimary` module in your model where you want to handle
-the primary flag. Then pass your primary flag attribute with required association
-key `owner_key` to  class helper method `set_as_primary`.
+You need to include `SetAsPrimary` module in your model where you want to handle the primary flag.
+Then to `set_as_primary` class helper method, pass your primary flag attribute. You might need to pass
+ association key `owner_key` if you wan to consider owner's (association's) context.
 
-Default primary flag attribute is `primary`, and you can use another too (but 
-make sure that flag should be a boolean column type).
+**NOTE:**  Default primary flag attribute is `primary`, and you can use another one too like `default` but
+make sure that flag should be present in the table and should be a boolean column type.
 
 #### Migration
 
@@ -105,10 +114,7 @@ After checking out the repo, run `bin/setup` to install dependencies. Then, run
 `rake test` to run the tests. You can also run `bin/console` for an interactive
 prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To
-release a new version, update the version number in `version.rb`, and then run
-`bundle exec rake release`, which will create a git tag for the version, push git
-commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`.
 
 ## Contributing
 

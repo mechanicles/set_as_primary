@@ -15,7 +15,12 @@ module SetAsPrimary
     instance_eval do
       class_attribute :_primary_flag_attribute, :_owner_key, :_force_primary
 
-      def set_as_primary(primary_flag_attribute = :primary, options)
+      def set_as_primary(primary_flag_attribute = :primary, options = {})
+        if primary_flag_attribute.is_a?(Hash)
+          options = primary_flag_attribute
+          primary_flag_attribute = :primary
+        end
+
         configuration = { owner_key: nil, force_primary: true }
 
         configuration.update(options) if options.is_a?(Hash)
@@ -35,11 +40,7 @@ module SetAsPrimary
 
           owner_key = configuration[:owner_key]
 
-          if owner_key.nil?
-            raise SetAsPrimary::Error, "Please provide `owner_key` option."
-          end
-
-          if reflect_on_association(owner_key).nil?
+          if owner_key.present? && reflect_on_association(owner_key).nil?
             raise ActiveRecord::AssociationNotFoundError.new(self, owner_key)
           end
         end
@@ -50,7 +51,7 @@ module SetAsPrimary
     def unset_old_primary
       return unless self.public_send(self.class._primary_flag_attribute)
 
-      scope = self.class.where(scope_options)
+      scope = self.class.where(scope_options) if scope_options.present?
 
       scope = scope.where("id != ?", id) unless new_record?
 
@@ -66,12 +67,14 @@ module SetAsPrimary
     end
 
     def scope_options
-      if self.class.reflect_on_association(self._owner_key).options[:polymorphic]
-        polymorphic_condition_options
-      else
-        owner_id = "#{self.class._owner_key}_id".to_sym
-        { owner_id => self.public_send(owner_id) }
-      end
+      return nil if self.class._owner_key.nil?
+
+      @scope_option ||= if self.class.reflect_on_association(self.class._owner_key).options[:polymorphic]
+                          polymorphic_condition_options
+                        else 
+                          owner_id = "#{self.class._owner_key}_id".to_sym
+                          { owner_id => self.public_send(owner_id) }
+                        end
     end
 
     def polymorphic_condition_options
