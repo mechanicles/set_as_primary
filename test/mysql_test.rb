@@ -5,6 +5,7 @@ require "active_record/connection_adapters/mysql2_adapter"
 
 class MysqlTest < ActiveSupport::TestCase
   include GemSetupTest
+  include SingleModelWithNoAssociationTests
   include SimpleAssocationTests
   include PolymorphicAssociationTests
   include ExceptionsTests

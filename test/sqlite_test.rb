@@ -4,6 +4,7 @@ require_relative "test_helper"
 
 class SqliteTest < ActiveSupport::TestCase
   include GemSetupTest
+  include SingleModelWithNoAssociationTests
   include SimpleAssocationTests
   include PolymorphicAssociationTests
   include ExceptionsTests

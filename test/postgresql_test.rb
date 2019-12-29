@@ -4,6 +4,7 @@ require_relative "test_helper"
 
 class PostgresqlTest < ActiveSupport::TestCase
   include GemSetupTest
+  include SingleModelWithNoAssociationTests
   include SimpleAssocationTests
   include PolymorphicAssociationTests
   include ExceptionsTests
