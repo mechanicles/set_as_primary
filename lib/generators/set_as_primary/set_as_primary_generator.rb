@@ -17,7 +17,8 @@ module SetAsPrimary
       def copy_migration
         migration_template "migration.rb", "db/migrate/add_primary_column_to_#{table_name}.rb",
           migration_version: migration_version,
-          index_on: index_on
+          index_on: index_on,
+          support_partial_index: support_partial_index
       end
 
       def migration_version
@@ -44,6 +45,13 @@ module SetAsPrimary
         else
           ":#{flag_name}"
         end
+      end
+
+      def support_partial_index
+        # NOTE: Partial indexes are only supported for PostgreSQL and SQLite 3.8.0+.
+        # Also found that, even if we use SQLite 3.8.0+, we still get a syntax error.
+        # So currently we have ignored SQLite.
+        ActiveRecord::Base.connection.adapter_name.downcase.to_sym == :postgresql
       end
 
       def self.next_migration_number(dirname)
