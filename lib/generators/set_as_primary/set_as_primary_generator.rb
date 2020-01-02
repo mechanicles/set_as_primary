@@ -38,9 +38,9 @@ module SetAsPrimary
 
           if owner_association.options[:polymorphic]
             owner_type_key = "#{owner_key}_type"
-            "%i[#{owner_id_key}, #{owner_type_key}, #{flag_name}]"
+            "%i[#{owner_id_key} #{owner_type_key} #{flag_name}]"
           else
-            "%i[#{owner_id_key}, #{flag_name}]"
+            "%i[#{owner_id_key} #{flag_name}]"
           end
         else
           ":#{flag_name}"
