@@ -6,19 +6,52 @@ module SetAsPrimary
   module Generators
     class SetAsPrimaryGenerator < Rails::Generators::Base
       include Rails::Generators::Migration
-
       source_root File.expand_path("templates", __dir__)
-      argument :table_name, type: :string
 
-      desc "Adds a boolean column 'primary' to the given table."
+      desc "Adds a user defined boolean column to the given table."
+
+      argument :table_name, type: :string
+      argument :flag_name, type: :string
+      argument :owner_key, type: :string, default: ""
 
       def copy_migration
         migration_template "migration.rb", "db/migrate/add_primary_column_to_#{table_name}.rb",
-          migration_version: migration_version
+          migration_version: migration_version,
+          index_on: index_on,
+          support_partial_index: support_partial_index
       end
 
       def migration_version
         "[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]"
+      end
+
+      def index_on
+        if owner_key.present?
+          klass = table_name.classify.constantize
+          owner_association = klass.reflect_on_association(owner_key.to_sym)
+
+          if owner_association.nil?
+            raise ActiveRecord::AssociationNotFoundError.new(klass, owner_key)
+          end
+
+          owner_id_key = "#{owner_key}_id"
+
+          if owner_association.options[:polymorphic]
+            owner_type_key = "#{owner_key}_type"
+            "%i[#{owner_id_key}, #{owner_type_key}, #{flag_name}]"
+          else
+            "%i[#{owner_id_key}, #{flag_name}]"
+          end
+        else
+          ":#{flag_name}"
+        end
+      end
+
+      def support_partial_index
+        # NOTE: Partial indexes are only supported for PostgreSQL and SQLite 3.8.0+.
+        # Also found that, even if we use SQLite 3.8.0+, we still get a syntax error.
+        # So currently we have ignored SQLite.
+        ActiveRecord::Base.connection.adapter_name.downcase.to_sym == :postgresql
       end
 
       def self.next_migration_number(dirname)
