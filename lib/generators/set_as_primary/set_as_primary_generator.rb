@@ -11,8 +11,8 @@ module SetAsPrimary
       desc "Adds a user defined boolean column to the given table."
 
       argument :table_name, type: :string
-      argument :flag_name, type: :string 
-      argument :owner_key, type: :string, default: ''
+      argument :flag_name, type: :string
+      argument :owner_key, type: :string, default: ""
 
       def copy_migration
         migration_template "migration.rb", "db/migrate/add_primary_column_to_#{table_name}.rb",
@@ -33,9 +33,9 @@ module SetAsPrimary
           if owner_association.nil?
             raise ActiveRecord::AssociationNotFoundError.new(klass, owner_key)
           end
-          
+
           owner_id_key = "#{owner_key}_id"
-          
+
           if owner_association.options[:polymorphic]
             owner_type_key = "#{owner_key}_type"
             "%i[#{owner_id_key}, #{owner_type_key}, #{flag_name}]"

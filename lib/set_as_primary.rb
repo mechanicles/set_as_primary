@@ -70,11 +70,11 @@ module SetAsPrimary
       return nil if self.class._owner_key.nil?
 
       @scope_option ||= if self.class.reflect_on_association(self.class._owner_key).options[:polymorphic]
-                          polymorphic_condition_options
-                        else 
-                          owner_id = "#{self.class._owner_key}_id".to_sym
-                          { owner_id => self.public_send(owner_id) }
-                        end
+        polymorphic_condition_options
+      else
+        owner_id = "#{self.class._owner_key}_id".to_sym
+        { owner_id => self.public_send(owner_id) }
+      end
     end
 
     def polymorphic_condition_options

@@ -8,7 +8,7 @@ gemspec
 gem "activerecord", "~> 6.0.0"
 
 group :development do
-  gem "rubocop", ">= 0.47", require: false
-  gem "rubocop-performance", require: false
-  gem "rubocop-rails", require: false
+  gem "rubocop", ">= 0.47"
+  gem "rubocop-performance"
+  gem "rubocop-rails"
 end
