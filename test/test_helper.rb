@@ -266,7 +266,7 @@ module ExceptionsTests
       EmailAddress.set_as_primary "primary", owner_key: :user
     }
 
-    assert_equal("Wrong attribute! Please provide attribute in symbol type.", e.message)
+    assert_equal("wrong argument type (expected Symbol)", e.message)
   end
 
   def test_error_with_wrong_owner_key

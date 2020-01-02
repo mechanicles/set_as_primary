@@ -35,7 +35,7 @@ module SetAsPrimary
       private
         def handle_setup_errors(primary_flag_attribute, configuration)
           if !primary_flag_attribute.is_a?(Symbol)
-            raise SetAsPrimary::Error, "Wrong attribute! Please provide attribute in symbol type."
+            raise SetAsPrimary::Error, "wrong argument type (expected Symbol)"
           end
 
           owner_key = configuration[:owner_key]
