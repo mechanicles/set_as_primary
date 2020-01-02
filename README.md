@@ -1,12 +1,19 @@
 # SetAsPrimary
 
-The simplest way to handle the primary or default flag (:white_check_mark:) to
+The simplest way to handle the primary or default flag to
 your Rails models.
 
-Supports PostgreSQL, MySQL, and SQLite.
+Features:
+
+* Supports single model (without association), model with (`belongs_to`) association, and even polymorphic associations
+* Force primary
+* Supports PostgreSQL's unique partial index (constraint)
+* Supports PostgreSQL, MySQL, and SQLite
+
+
 
 [Demo Rails application](https://cryptic-lake-90495.herokuapp.com/) |
-[Demo Rails application GitHub repository](https://github.com/mechanicles/set_as_primary_rails_app)
+[Source code of Demo Rails application](https://github.com/mechanicles/set_as_primary_rails_app)
 
 [![Build Status](https://travis-ci.org/mechanicles/set_as_primary.svg?branch=master)](https://travis-ci.org/mechanicles/set_as_primary)
 
@@ -120,11 +127,11 @@ end
 ```
 You might have seen extra commented lines there. These lines are there for handling the unique constraint. Currently, these lines get created only for `PostgreSQL` adapter as it supports partial index.
 
-Please note that here we have passed an extra option `user` in the command that is nothing button the owner/association name. This extra option helps to handle the unique index constraint.
+Please note that here we have passed an extra option `user` in the command that is nothing button the owner/association name. This extra option helps to handle the unique partial index.
 
-**Note:** Partial indexes are only supported for PostgreSQL and SQLite 3.8.0+. But I also found that SQLite gives a syntax error so currently this gem only supports PostgreSQL.
+**Note:** Partial indexes are only supported for PostgreSQL and SQLite 3.8.0+. But I also found that SQLite gives an error so currently this gem only supports PostgreSQL's unique partial index constraint.
 
-**Even if we don't have constraint (only one 'true' constraint in the table), this gem takes care of it by updating all related records as `false` if the current record is set to `true.`**
+**Even if we don't have constraint (only one 'true' constraint in the table), this gem takes care of it so don't worry about the constraint.**
 
 Once migration file gets created, don't forget to run `rails db:migrate` to create an actual column in the table.
 
@@ -148,8 +155,6 @@ the table. If you don't want this flow, then set it as `false`.
 After checking out the repo, run `bin/setup` to install dependencies. Then, run
 `rake test` to run the tests. You can also run `bin/console` for an interactive
 prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`.
 
 ## Contributing
 

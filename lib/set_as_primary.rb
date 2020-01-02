@@ -10,22 +10,21 @@ module SetAsPrimary
 
   included do
     before_save :unset_old_primary
-    before_save :force_primary, if: -> { self.class._force_primary }
+    before_save :force_primary, if: -> { _klass._force_primary }
 
     instance_eval do
       class_attribute :_primary_flag_attribute, :_owner_key, :_force_primary
 
       def set_as_primary(primary_flag_attribute = :primary, options = {})
         if primary_flag_attribute.is_a?(Hash)
-          options = primary_flag_attribute
-          primary_flag_attribute = :primary
+          options = primary_flag_attribute; primary_flag_attribute = :primary
         end
 
         configuration = { owner_key: nil, force_primary: true }
 
         configuration.update(options) if options.is_a?(Hash)
 
-        handle_setup_errors(primary_flag_attribute, configuration)
+        _handle_setup_errors(primary_flag_attribute, configuration)
 
         self._primary_flag_attribute = primary_flag_attribute
         self._owner_key = configuration[:owner_key]
@@ -33,7 +32,7 @@ module SetAsPrimary
       end
 
       private
-        def handle_setup_errors(primary_flag_attribute, configuration)
+        def _handle_setup_errors(primary_flag_attribute, configuration)
           if !primary_flag_attribute.is_a?(Symbol)
             raise SetAsPrimary::Error, "wrong argument type (expected Symbol)"
           end
@@ -49,40 +48,44 @@ module SetAsPrimary
 
   private
     def unset_old_primary
-      return unless self.public_send(self.class._primary_flag_attribute)
+      return unless public_send(_klass._primary_flag_attribute)
 
-      scope = self.class.where(scope_options) if scope_options.present?
+      scope = _klass.where(_scope_options) if _scope_options.present?
 
       scope = scope.where("id != ?", id) unless new_record?
 
-      scope.update_all(self.class._primary_flag_attribute => false)
+      scope.update_all(_klass._primary_flag_attribute => false)
     end
 
     def force_primary
-      count = self.class.where(scope_options).count
+      count = _klass.where(_scope_options).count
 
       if (count == 1 && !new_record?) || (count == 0 && new_record?)
-        self.public_send("#{self.class._primary_flag_attribute}=", true)
+        public_send("#{_klass._primary_flag_attribute}=", true)
       end
     end
 
-    def scope_options
-      return nil if self.class._owner_key.nil?
+    def _scope_options
+      return nil if _klass._owner_key.nil?
 
-      @scope_option ||= if self.class.reflect_on_association(self.class._owner_key).options[:polymorphic]
-        polymorphic_condition_options
+      @_scope_options ||= if _klass.reflect_on_association(_klass._owner_key).options[:polymorphic]
+        _polymorphic_condition_options
       else
-        owner_id = "#{self.class._owner_key}_id".to_sym
-        { owner_id => self.public_send(owner_id) }
+        owner_id = "#{_klass._owner_key}_id".to_sym
+        { owner_id => public_send(owner_id) }
       end
     end
 
-    def polymorphic_condition_options
+    def _polymorphic_condition_options
       owner = self.public_send(self.class._owner_key)
 
       {
-        "#{self.class._owner_key}_id".to_sym =>  owner.id,
-        "#{self.class._owner_key}_type".to_sym => owner.class.name
+        "#{_klass._owner_key}_id".to_sym =>  owner.id,
+        "#{_klass._owner_key}_type".to_sym => owner.class.name
       }
+    end
+
+    def _klass
+      self.class
     end
 end
