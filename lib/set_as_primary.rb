@@ -50,15 +50,17 @@ module SetAsPrimary
     def unset_old_primary
       return unless public_send(_klass._primary_flag_attribute)
 
-      scope = _klass.where(_scope_options) if _scope_options.present?
-
+      scope = _klass
+      scope = scope.where(_scope_options) if _scope_options.present?
       scope = scope.where("id != ?", id) unless new_record?
 
       scope.update_all(_klass._primary_flag_attribute => false)
     end
 
     def force_primary
-      count = _klass.where(_scope_options).count
+      scope = _klass
+      scope = scope.where(_scope_options) if _scope_options.present?
+      count = scope.count
 
       if (count == 1 && !new_record?) || (count == 0 && new_record?)
         public_send("#{_klass._primary_flag_attribute}=", true)
