@@ -127,7 +127,7 @@ end
 ```
 You might have seen extra commented lines there. These lines are there for handling the unique constraint. Currently, these lines get created only for `PostgreSQL` adapter as it supports partial index.
 
-Please note that here we have passed an extra option `user` in the command that is nothing button the owner/association name. This extra option helps to handle the unique partial index.
+Please note that here we have passed an extra option `user` in the command that is nothing but the owner/association name. This extra option helps to handle the unique partial index.
 
 **Note:** Partial indexes are only supported for PostgreSQL and SQLite 3.8.0+. But I also found that SQLite gives an error so currently this gem only supports PostgreSQL's unique partial index constraint.
 
