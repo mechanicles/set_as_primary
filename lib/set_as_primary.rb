@@ -11,6 +11,7 @@ module SetAsPrimary
   included do
     before_save :unset_old_primary
     before_save :force_primary, if: -> { _klass._force_primary }
+    after_destroy :force_primary, if: -> { _klass._force_primary }
 
     instance_eval do
       class_attribute :_primary_flag_attribute, :_owner_key, :_force_primary
@@ -62,7 +63,10 @@ module SetAsPrimary
       scope = scope.where(_scope_options) if _scope_options.present?
       count = scope.count
 
-      if (count == 1 && !new_record?) || (count == 0 && new_record?)
+      if count == 1 && destroyed?
+        object = scope.first
+        object.update_columns(_klass._primary_flag_attribute => true)
+      elsif (count == 1 && !new_record?) || (count == 0 && new_record?)
         public_send("#{_klass._primary_flag_attribute}=", true)
       end
     end
