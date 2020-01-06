@@ -1,5 +1,8 @@
 ---
-sudo: false
+sudo: true
+env: 
+  global:
+    - CC_TEST_REPORTER_ID=353b5634de390dad574939f59c2ef3798b81f06df548f7bdd11cd8225be484f3
 language: ruby
 rvm:
   - 2.5.3
@@ -7,7 +10,13 @@ gemfile:
   - Gemfile
   - test/gemfiles/activerecord52.gemfile
   - test/gemfiles/activerecord42.gemfile
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 script: bundle exec rake test
+after_script:
+  - ./cc-test-reporter after-build --debug --exit-code $TRAVIS_TEST_RESULT
 services:
   - postgresql
   - mysql

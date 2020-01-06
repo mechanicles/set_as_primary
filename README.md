@@ -11,11 +11,12 @@ Features:
 * Supports PostgreSQL, MySQL, and SQLite
 
 
-
 [Demo Rails application](https://cryptic-lake-90495.herokuapp.com/) |
 [Source code of Demo Rails application](https://github.com/mechanicles/set_as_primary_rails_app)
 
 [![Build Status](https://travis-ci.org/mechanicles/set_as_primary.svg?branch=master)](https://travis-ci.org/mechanicles/set_as_primary)
+[![Maintainability](https://api.codeclimate.com/v1/badges/9aa764138b14b87c8fe1/maintainability)](https://codeclimate.com/github/mechanicles/set_as_primary/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/9aa764138b14b87c8fe1/test_coverage)](https://codeclimate.com/github/mechanicles/set_as_primary/test_coverage)
 
 ## Installation
 
