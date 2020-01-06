@@ -48,9 +48,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "activerecord"
   spec.add_development_dependency "rb-readline"
   spec.add_development_dependency "byebug"
-  spec.add_development_dependency "rubocop", ">= 0.47"
-  spec.add_development_dependency "rubocop-performance"
-  spec.add_development_dependency "rubocop-rails"
 
   spec.add_development_dependency "pg"
   spec.add_development_dependency "mysql2"
