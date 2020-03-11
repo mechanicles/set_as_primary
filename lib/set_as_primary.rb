@@ -16,23 +16,23 @@ module SetAsPrimary
     instance_eval do
       class_attribute :_primary_flag_attribute, :_owner_key, :_force_primary
 
-      def set_as_primary(primary_flag_attribute = :primary, options = {})
-        if primary_flag_attribute.is_a?(Hash)
-          options = primary_flag_attribute; primary_flag_attribute = :primary
+      private
+        def set_as_primary(primary_flag_attribute = :primary, options = {})
+          if primary_flag_attribute.is_a?(Hash)
+            options = primary_flag_attribute; primary_flag_attribute = :primary
+          end
+
+          configuration = { owner_key: nil, force_primary: true }
+
+          configuration.update(options) if options.is_a?(Hash)
+
+          _handle_setup_errors(primary_flag_attribute, configuration)
+
+          self._primary_flag_attribute = primary_flag_attribute
+          self._owner_key = configuration[:owner_key]
+          self._force_primary = configuration[:force_primary]
         end
 
-        configuration = { owner_key: nil, force_primary: true }
-
-        configuration.update(options) if options.is_a?(Hash)
-
-        _handle_setup_errors(primary_flag_attribute, configuration)
-
-        self._primary_flag_attribute = primary_flag_attribute
-        self._owner_key = configuration[:owner_key]
-        self._force_primary = configuration[:force_primary]
-      end
-
-      private
         def _handle_setup_errors(primary_flag_attribute, configuration)
           if !primary_flag_attribute.is_a?(Symbol)
             raise SetAsPrimary::Error, "wrong argument type (expected Symbol)"
