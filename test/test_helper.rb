@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "simplecov"
-SimpleCov.start
 require "bundler/setup"
 Bundler.require(:default)
 require "minitest/autorun"
@@ -14,6 +12,8 @@ Minitest::Test = Minitest::Unit::TestCase unless defined? (Minitest::Test)
 
 # for debugging
 ActiveRecord::Base.logger = ActiveSupport::Logger.new(STDOUT) if ENV["VERBOSE"]
+
+ActiveSupport.test_order = :random
 
 class User < ActiveRecord::Base
   has_many :email_addresses
@@ -57,26 +57,26 @@ def create_tables
 
   ActiveRecord::Migration.create_table :users, force: true do |t|
     t.string :name, null: false
-    t.timestamps
+    t.timestamps null: false
   end
 
   ActiveRecord::Migration.create_table :people, force: true do |t|
     t.string :name, null: false
-    t.timestamps
+    t.timestamps null: false
   end
 
   ActiveRecord::Migration.create_table :email_addresses, force: true do |t|
     t.string :email, null: false
     t.boolean :primary, default: false, null: false
     t.references :user
-    t.timestamps
+    t.timestamps null: false
   end
 
   ActiveRecord::Migration.create_table :phone_numbers, force: true do |t|
     t.string :number, null: false
     t.boolean :default, default: false, null: false
     t.references :user
-    t.timestamps
+    t.timestamps null: false
   end
 
   ActiveRecord::Migration.create_table :addresses, force: true do |t|
@@ -84,14 +84,14 @@ def create_tables
     t.boolean :primary, default: false, null: false
     t.integer :owner_id, null: false
     t.string :owner_type, null: false
-    t.timestamps
+    t.timestamps null: false
   end
 
   ActiveRecord::Migration.create_table :posts, force: true do |t|
     t.string :title, null: false
     t.text :content, null: false
     t.boolean :primary, default: false, null: false
-    t.timestamps
+    t.timestamps null: false
   end
 end
 
@@ -110,7 +110,7 @@ end
 
 module GemSetupTest
   def test_no_exception_is_raised_if_set_as_primary_method_is_called_with_correct_arguments
-    assert_silent { EmailAddress.set_as_primary :primary, owner_key: :user }
+    assert_silent { EmailAddress.send(:set_as_primary, :primary, owner_key: :user) }
   end
 
   def test_default_primary_flag_attribute_should_be_primary
@@ -131,12 +131,12 @@ module GemSetupTest
   end
 
   def test_force_primary_attribute_should_be_false
-    EmailAddress.set_as_primary :primary, owner_key: :user, force_primary: false
+    EmailAddress.send(:set_as_primary, :primary, owner_key: :user, force_primary: false)
     assert_not EmailAddress._force_primary
   ensure
     # NOTE: We are making sure that it will set force_primary back to `true` so other
     # tests get passed.
-    EmailAddress.set_as_primary :primary, owner_key: :user, force_primary: true
+    EmailAddress.send(:set_as_primary, :primary, owner_key: :user, force_primary: true)
   end
 end
 
@@ -148,7 +148,7 @@ module SingleModelWithNoAssociationTests
   end
 
   def test_if_force_primary_is_set_to_false_with_single_model
-    Post.set_as_primary force_primary: false
+    Post.send(:set_as_primary, force_primary: false)
 
     post = Post.create!(title: "post 1", content: "content 1")
 
@@ -163,7 +163,7 @@ module SingleModelWithNoAssociationTests
     post_2.destroy
     assert_not post.reload.primary?
   ensure
-    Post.set_as_primary
+    Post.send(:set_as_primary)
   end
 
   def test_it_updates_primary_correctly_with_single_model
@@ -222,7 +222,7 @@ module SimpleAssocationTests
   end
 
   def test_if_force_primary_is_set_to_false_with_simple_association
-    EmailAddress.set_as_primary :primary, owner_key: :user, force_primary: false
+    EmailAddress.send(:set_as_primary, :primary, owner_key: :user, force_primary: false)
 
     alice = User.first
 
@@ -238,7 +238,7 @@ module SimpleAssocationTests
     email_address2.destroy
     assert_not email_address1.reload.primary?
   ensure
-    EmailAddress.set_as_primary :primary, owner_key: :user, force_primary: true
+    EmailAddress.send(:set_as_primary, :primary, owner_key: :user, force_primary: true)
   end
 
   def test_it_handles_force_primary_correctly_when_we_delete_the_record_with_simple_association
@@ -295,7 +295,7 @@ module PolymorphicAssociationTests
   end
 
   def test_if_force_primary_is_set_to_false_with_polymorphic_association
-    Address.set_as_primary :primary, owner_key: :owner, force_primary: false
+    Address.send(:set_as_primary, :primary, owner_key: :owner, force_primary: false)
 
     alice = User.first
 
@@ -310,7 +310,7 @@ module PolymorphicAssociationTests
     address2.destroy
     assert_not address1.reload.primary?
   ensure
-    Address.set_as_primary :primary, owner_key: :owner, force_primary: true
+    Address.send(:set_as_primary, :primary, owner_key: :owner, force_primary: true)
   end
 
   def test_it_handles_force_primary_correctly_when_we_delete_the_record_with_polymorphic_association
@@ -332,7 +332,7 @@ end
 module ExceptionsTests
   def test_wrong_argument_error
     e = assert_raise(SetAsPrimary::Error) {
-      EmailAddress.set_as_primary "primary", owner_key: :user
+      EmailAddress.send(:set_as_primary, "primary", owner_key: :user)
     }
 
     assert_equal("wrong argument type (expected Symbol)", e.message)
@@ -340,7 +340,7 @@ module ExceptionsTests
 
   def test_error_with_wrong_owner_key
     e = assert_raise(ActiveRecord::AssociationNotFoundError) {
-      EmailAddress.set_as_primary :primary, owner_key: :person
+      EmailAddress.send(:set_as_primary, :primary, owner_key: :person)
     }
 
     assert_equal("Association named 'person' was not found on Class; perhaps you misspelled it?", e.message)
