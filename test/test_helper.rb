@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "simplecov"
-SimpleCov.start
 require "bundler/setup"
 Bundler.require(:default)
 require "minitest/autorun"
@@ -14,6 +12,8 @@ Minitest::Test = Minitest::Unit::TestCase unless defined? (Minitest::Test)
 
 # for debugging
 ActiveRecord::Base.logger = ActiveSupport::Logger.new(STDOUT) if ENV["VERBOSE"]
+
+ActiveSupport.test_order = :random
 
 class User < ActiveRecord::Base
   has_many :email_addresses
@@ -57,26 +57,26 @@ def create_tables
 
   ActiveRecord::Migration.create_table :users, force: true do |t|
     t.string :name, null: false
-    t.timestamps
+    t.timestamps null: false
   end
 
   ActiveRecord::Migration.create_table :people, force: true do |t|
     t.string :name, null: false
-    t.timestamps
+    t.timestamps null: false
   end
 
   ActiveRecord::Migration.create_table :email_addresses, force: true do |t|
     t.string :email, null: false
     t.boolean :primary, default: false, null: false
     t.references :user
-    t.timestamps
+    t.timestamps null: false
   end
 
   ActiveRecord::Migration.create_table :phone_numbers, force: true do |t|
     t.string :number, null: false
     t.boolean :default, default: false, null: false
     t.references :user
-    t.timestamps
+    t.timestamps null: false
   end
 
   ActiveRecord::Migration.create_table :addresses, force: true do |t|
@@ -84,14 +84,14 @@ def create_tables
     t.boolean :primary, default: false, null: false
     t.integer :owner_id, null: false
     t.string :owner_type, null: false
-    t.timestamps
+    t.timestamps null: false
   end
 
   ActiveRecord::Migration.create_table :posts, force: true do |t|
     t.string :title, null: false
     t.text :content, null: false
     t.boolean :primary, default: false, null: false
-    t.timestamps
+    t.timestamps null: false
   end
 end
 
