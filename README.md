@@ -74,7 +74,7 @@ end
 
 You need to include `SetAsPrimary` module in your model where you want to handle the primary flag.
 Then to `set_as_primary` class helper method, pass your primary flag attribute. You might need to pass
- association key `owner_key` if you wan to consider owner (association) context.
+ association key `owner_key` if you want to consider owner (association) context.
 
 **Note:**  Default primary flag attribute is `primary`, and you can use another one too like `default` but
 make sure that flag should be present in the table and should be a boolean data type column.
