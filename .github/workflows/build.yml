@@ -1,0 +1,44 @@
+name: build
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      CC_TEST_REPORTER_ID: 353b5634de390dad574939f59c2ef3798b81f06df548f7bdd11cd8225be484f3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6.0
+          bundler-cache: true
+
+      - name: Install Bundler
+        run: gem install bundler
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Set up Code Climate Test Reporter
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+          ./cc-test-reporter before-build
+
+      - uses: ankane/setup-postgres@v1
+        with:
+          database: set_as_primary_test
+
+      - uses: ankane/setup-mysql@v1
+        with:
+          database: set_as_primary_test
+      - run: mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql
+
+      - name: Run tests
+        run: bundle exec rake
+
+      - name: Upload test coverage results to Code Climate
+        if: always() && ${{ github.ref == 'refs/heads/master' }} # Adjust the branch name if needed
+        run: ./cc-test-reporter after-build --debug

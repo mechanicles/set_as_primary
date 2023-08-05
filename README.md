@@ -1,6 +1,6 @@
 # SetAsPrimary
 
-[![Build Status](https://travis-ci.org/mechanicles/set_as_primary.svg?branch=master)](https://travis-ci.org/mechanicles/set_as_primary)
+[![Build Status](https://github.com/mechanicles/set_as_primary/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/mechanicles/set_as_primary/actions)
 [![Maintainability](https://api.codeclimate.com/v1/badges/9aa764138b14b87c8fe1/maintainability)](https://codeclimate.com/github/mechanicles/set_as_primary/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/9aa764138b14b87c8fe1/test_coverage)](https://codeclimate.com/github/mechanicles/set_as_primary/test_coverage)
 
