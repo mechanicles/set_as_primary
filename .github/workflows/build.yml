@@ -2,6 +2,11 @@ name: build
 on: [push, pull_request]
 jobs:
   build:
+    strategy:
+      matrix:
+        include:
+          - ruby: 3.0
+            gemfile: test/gemfiles/activerecord61.gemfile
     runs-on: ubuntu-latest
     env:
       CC_TEST_REPORTER_ID: 353b5634de390dad574939f59c2ef3798b81f06df548f7bdd11cd8225be484f3
@@ -12,7 +17,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6.0
+          ruby-version: 3.0
           bundler-cache: true
 
       - name: Install Bundler

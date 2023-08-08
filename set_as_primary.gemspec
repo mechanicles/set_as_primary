@@ -36,9 +36,9 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = ">= 2.2"
+  spec.required_ruby_version = ">= 3"
 
-  spec.add_dependency "activesupport", ">= 4.2"
+  spec.add_dependency "activesupport", ">= 6.1"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"
@@ -52,4 +52,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pg"
   spec.add_development_dependency "mysql2"
   spec.add_development_dependency "sqlite3"
+  spec.add_development_dependency "rubocop"
+  spec.add_development_dependency "rubocop-performance"
+  spec.add_development_dependency "rubocop-rails"
 end
