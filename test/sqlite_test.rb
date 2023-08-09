@@ -9,7 +9,7 @@ class SqliteTest < ActiveSupport::TestCase
   include PolymorphicAssociationTests
   include ExceptionsTests
 
-  print_test_adapter_info 'sqlite'
+  print_test_adapter_info "sqlite"
 
   def setup
     super

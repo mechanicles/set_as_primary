@@ -5,4 +5,4 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in set_as_primary.gemspec
 gemspec
 
-gem "activerecord", "~> 6.1.0"
+gem "activerecord", "~> 7.0.0"
