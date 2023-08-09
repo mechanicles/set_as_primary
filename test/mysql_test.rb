@@ -10,6 +10,8 @@ class MysqlTest < ActiveSupport::TestCase
   include PolymorphicAssociationTests
   include ExceptionsTests
 
+  print_test_adapter_info "mysql"
+
   def setup
     super
     @@setup ||= begin

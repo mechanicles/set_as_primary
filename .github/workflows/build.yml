@@ -2,6 +2,13 @@ name: build
 on: [push, pull_request]
 jobs:
   build:
+    strategy:
+      matrix:
+        include:
+          - ruby: 3.0
+            gemfile: test/gemfiles/activerecord61.gemfile
+          - ruby: 3.1
+            gemfile: Gemfile
     runs-on: ubuntu-latest
     env:
       CC_TEST_REPORTER_ID: 353b5634de390dad574939f59c2ef3798b81f06df548f7bdd11cd8225be484f3
@@ -12,7 +19,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6.0
+          ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
       - name: Install Bundler
@@ -37,7 +44,7 @@ jobs:
       - run: mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql
 
       - name: Run tests
-        run: bundle exec rake
+        run: bundle exec rake test
 
       - name: Upload test coverage results to Code Climate
         if: always() && ${{ github.ref == 'refs/heads/master' }} # Adjust the branch name if needed

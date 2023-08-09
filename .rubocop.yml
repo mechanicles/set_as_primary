@@ -165,10 +165,6 @@ Style/StringLiterals:
   Enabled: true
   EnforcedStyle: double_quotes
 
-# Detect hard tabs, no hard tabs.
-Layout/Tab:
-  Enabled: true
-
 # Blank lines should not have any spaces.
 Layout/TrailingEmptyLines:
   Enabled: true
@@ -250,4 +246,3 @@ Performance/ReverseEach:
 
 Performance/UnfreezeString:
   Enabled: true
-

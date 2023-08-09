@@ -9,6 +9,8 @@ class PostgresqlTest < ActiveSupport::TestCase
   include PolymorphicAssociationTests
   include ExceptionsTests
 
+  print_test_adapter_info "postgresql"
+
   def setup
     super
     @@setup ||= begin

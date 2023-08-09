@@ -348,3 +348,7 @@ module ExceptionsTests
     assert_equal("Association named 'person' was not found on Class; perhaps you misspelled it?", e.message)
   end
 end
+
+def print_test_adapter_info(adapter)
+  puts "Running tests for #{adapter} adapter"
+end

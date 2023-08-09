@@ -3,19 +3,23 @@
 require "bundler/gem_tasks"
 require "rake/testtask"
 
-Rake::TestTask.new(:postgresql) do |t|
-  t.libs << "test"
-  t.test_files = FileList["test/postgresql_test.rb"]
+ADAPTERS = %w[postgresql mysql sqlite].freeze
+
+ADAPTERS.each do |adapter|
+  namespace :test do
+    Rake::TestTask.new(adapter) do |t|
+      t.description = "Run #{adapter} tests"
+      t.libs << "test"
+      t.test_files = FileList["test/#{adapter}_test.rb"]
+    end
+  end
 end
 
-Rake::TestTask.new(:mysql) do |t|
-  t.libs << "test"
-  t.test_files = FileList["test/mysql_test.rb"]
+desc "Run all tests"
+task :test do
+  ADAPTERS.each do |adapter|
+    Rake::Task["test:#{adapter}"].invoke
+  end
 end
 
-Rake::TestTask.new(:sqlite) do |t|
-  t.libs << "test"
-  t.test_files = FileList["test/sqlite_test.rb"]
-end
-
-task default: [:postgresql, :mysql, :sqlite]
+task default: :test

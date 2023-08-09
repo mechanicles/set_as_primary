@@ -1,3 +1,6 @@
+## 0.1.4 (unreleased)
+- Dropped support for Ruby < 3 and Rails < 6.1
+
 ## 0.1.3 (2019-02-02)
 - Fixed index_on issue.
 
