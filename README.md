@@ -1,21 +1,27 @@
 # SetAsPrimary
 
-[![Build Status](https://github.com/mechanicles/set_as_primary/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/mechanicles/set_as_primary/actions)
-[![Maintainability](https://api.codeclimate.com/v1/badges/9aa764138b14b87c8fe1/maintainability)](https://codeclimate.com/github/mechanicles/set_as_primary/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/9aa764138b14b87c8fe1/test_coverage)](https://codeclimate.com/github/mechanicles/set_as_primary/test_coverage)
-
-[Demo Rails application](https://cryptic-lake-90495.herokuapp.com/) |
-[Source code of Demo Rails application](https://github.com/mechanicles/set_as_primary_rails_app)
-
-The simplest way to handle the primary or default flag to
-your Rails models.
+The simplest way to handle primary or default boolean flag to your Rails
+model records.
 
 Features:
 
 * Supports single model (without association), model with (`belongs_to`) association, and even polymorphic associations
 * Force primary
-* Supports PostgreSQL's unique partial index (constraint)
 * Supports PostgreSQL, MySQL, and SQLite
+* Supports PostgreSQL's unique partial index (constraint)
+
+You can find source code of demo Rails application [here](https://github.com/mechanicles/set_as_primary_rails_app).
+
+[![Build Status](https://github.com/mechanicles/set_as_primary/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/mechanicles/set_as_primary/actions)
+[![Maintainability](https://api.codeclimate.com/v1/badges/9aa764138b14b87c8fe1/maintainability)](https://codeclimate.com/github/mechanicles/set_as_primary/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/9aa764138b14b87c8fe1/test_coverage)](https://codeclimate.com/github/mechanicles/set_as_primary/test_coverage)
+
+## A lovely quote from a user :heart:
+
+> Thanks for this gem! <br>
+> This gem solves a small, relatively obscure need but it does so really, really well. Thank you!
+
+***- [Veeral Patel](https://github.com/mechanicles/set_as_primary/issues/8)*** 
 
 ## Installation
 
